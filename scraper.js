@@ -1,18 +1,14 @@
 const request = require('request');
 
-async function youtube(query, limit, type) {
+async function youtube(query) {
     return new Promise((resolve) => {
         let json = { results: [], version: require('./package.json').version };
 
-        const videoFilter = "&sp=EgIQAQ%253D%253D";
-        const playlistFilter = "&sp=EgIQAw%253D%253D"
+        const shortVideoFilter = "&sp=EgQQARgB";
+        const limit = 10;
         let url = `https://www.youtube.com/results?q=${encodeURIComponent(query)}`;
 
-        if (type === "playlist") {
-            url += playlistFilter;
-        } else {
-            url += videoFilter;
-        }
+        url += shortVideoFilter;
 
         // Access YouTube search
         request(url, (error, response, html) => {
