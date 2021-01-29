@@ -54,12 +54,7 @@ function parseJsonFormat(contents, json, limit) {
             if (sectionList.hasOwnProperty("itemSectionRenderer")) {
                 for (let index = 0; index < limit && index < sectionList.itemSectionRenderer.contents.length; index++) {
                     try {
-                        if (sectionList.itemSectionRenderer.contents[index].hasOwnProperty("videoRenderer")) {
-                            json.results.push(parseVideoRenderer(sectionList.itemSectionRenderer.contents[index].videoRenderer));
-                        }
-                        if (sectionList.itemSectionRenderer.contents[index].hasOwnProperty("playlistRenderer")) {
-                            json.results.push(parsePlaylistRenderer(sectionList.itemSectionRenderer.contents[index].playlistRenderer));
-                        }
+                        json.results.push(parseVideoRenderer(sectionList.itemSectionRenderer.contents[index].videoRenderer));
                     }
                     catch(ex) {
                         console.error("Failed to parse renderer:", ex);
@@ -76,29 +71,6 @@ function parseJsonFormat(contents, json, limit) {
 }
 
 /**
- * Parse a playlistRenderer object from youtube search results
- * @param {object} renderer - The playlist renderer
- * @returns object with data to return for this playlist
- */
-function parsePlaylistRenderer(renderer) {
-    let thumbnails = renderer.thumbnailRenderer.playlistVideoThumbnailRenderer.thumbnail.thumbnails;
-    let playlist = {
-        "type": "playlist",
-        "id": renderer.playlistId,
-        "title": renderer.title.simpleText,
-        "url": `https://www.youtube.com${renderer.navigationEndpoint.commandMetadata.webCommandMetadata.url}`,
-        "thumbnail_src": thumbnails[thumbnails.length - 1].url
-    };
-
-    let uploader = {
-        "username": renderer.shortBylineText.runs[0].text,
-        "url": `https://www.youtube.com${renderer.shortBylineText.runs[0].navigationEndpoint.commandMetadata.webCommandMetadata.url}`
-    };
-
-    return { content: playlist, uploader: uploader };
-}
-
-/**
  * Parse a videoRenderer object from youtube search results
  * @param {object} renderer - The video renderer
  * @returns object with data to return for this video
@@ -109,6 +81,7 @@ function parseVideoRenderer(renderer) {
         "id": renderer.videoId,
         "title": renderer.title.runs.reduce(comb, ""),
         "url": `https://www.youtube.com${renderer.navigationEndpoint.commandMetadata.webCommandMetadata.url}`,
+        "duration": renderer.lengthText ? renderer.lengthText.simpleText : "Live",
         "upload_date": renderer.publishedTimeText ? renderer.publishedTimeText.simpleText : "Live",
         "thumbnail_src": renderer.thumbnail.thumbnails[renderer.thumbnail.thumbnails.length - 1].url
     };
