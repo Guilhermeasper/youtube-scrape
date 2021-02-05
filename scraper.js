@@ -5,7 +5,7 @@ async function youtube(query) {
         let json = { results: [], version: require('./package.json').version };
 
         const shortVideoFilter = "&sp=EgQQARgB";
-        const limit = 10;
+        const limit = 15;
         let url = `https://www.youtube.com/results?q=${encodeURIComponent(query)}`;
 
         url += shortVideoFilter;
@@ -58,7 +58,7 @@ function parseJsonFormat(contents, json, limit) {
                     }
                     catch(ex) {
                         console.error("Failed to parse renderer:", ex);
-                        console.log(content);
+                        console.log(contents);
                     }
                 }
             }
